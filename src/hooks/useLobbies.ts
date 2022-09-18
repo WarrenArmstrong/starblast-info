@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Option, some, none } from "ts-option"
 import { Lobby, Location, Mode } from "../Types"
+import { capitalize } from "../Utilities"
 
 type System = {
 	name: string,

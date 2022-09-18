@@ -1,16 +1,35 @@
 import { none, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
-import { capitalize, getShade, getTimeElapsedString } from "../Utilities"
+import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, pascalCaseToWords } from "../Utilities"
 import Constants from "../Constants"
 import useLobbies from "../hooks/useLobbies"
-import { allLocations, allModes, Lobby } from "../Types"
+import { allLobbyColumns, allLocations, allModes, ColumnSortState, Lobby, LobbyColumn } from "../Types"
 import useFilters from "../hooks/useFilters"
 import ToggleFilters from "./ToggleFilters"
+import ColumnHeader from "./ColumnHeader"
+import { useState } from "react"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies()
 	const [selectedLocations, toggleLocation] = useFilters(allLocations)
 	const [selectedModes, toggleMode] = useFilters(allModes)
+	const [sortColumn, setSortColumn] = useState<LobbyColumn>(LobbyColumn.TimeElapsed)
+	const [sortAscending, setSortAscending] = useState<boolean>(true)
+
+	function updateSort(column: LobbyColumn) {
+		return (ascending: boolean) => {
+			setSortColumn(column)
+			setSortAscending(ascending)
+		}
+	}
+
+	function getColumnSortState(column: LobbyColumn) {
+		if (sortColumn === column) {
+			return sortAscending ? ColumnSortState.Ascending : ColumnSortState.Descending
+		} else {
+			return ColumnSortState.None
+		}
+	}
 
 	return <div>
 		<h1 className="center" style={{color: Constants.textColor}}>System Browser</h1>
@@ -20,11 +39,12 @@ export default function LobbyBrowser() {
 			<table style={{borderTopWidth: 2, borderTopStyle: "solid", borderColor: getShade(1)}}>
 				<thead style={{borderBottomWidth: 2, borderBottomStyle: "solid", borderColor: getShade(1)}}>
 					<tr>
-						<th>Id</th>
-						<th>Location</th>
-						<th>Mode</th>
-						<th>Players</th>
-						<th>Time Started</th>
+						{
+							allLobbyColumns.map(column => <ColumnHeader key={column}
+								title={pascalCaseToWords(LobbyColumn[column])} sortState={getColumnSortState(column)}
+								updateSort={updateSort(column)}
+							/>)
+						}
 					</tr>
 				</thead>
 				{
@@ -34,8 +54,9 @@ export default function LobbyBrowser() {
 								lobbies.get
 									.filter(lobby => selectedLocations.has(lobby.location))
 									.filter(lobby => selectedModes.has(lobby.mode))
+									.sort(getLobbySortFunction(sortColumn, sortAscending))
 									.map(lobby => 
-										<tr>
+										<tr key={lobby.id}>
 											<td>{lobby.id}</td>
 											<td>{lobby.location}</td>
 											<td>{capitalize(lobby.mode)}</td>

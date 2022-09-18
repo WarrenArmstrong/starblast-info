@@ -10,9 +10,9 @@ export const allLocations: Array<Location> = Object.values(LocationEnum)
 	.map(location => location as Location)
 
 enum ModeEnum {
-	invasion,
+	team,
 	survival,
-	team
+	invasion
 }
 export type Mode = keyof typeof ModeEnum
 export const allModes: Array<Mode> = Object.values(ModeEnum)
@@ -25,4 +25,21 @@ export type Lobby = {
 	location: Location,
 	mode: Mode,
 	timeElapsed: number
+}
+
+export enum LobbyColumn {
+	Id,
+	Location,
+	Mode,
+	PlayerCount,
+	TimeElapsed
+}
+export const allLobbyColumns: Array<LobbyColumn> = Object.values(LobbyColumn)
+	.filter((lobbyColumn) => !isNaN(Number(lobbyColumn)))
+	.map(lobbyColumn => lobbyColumn as LobbyColumn)
+
+export enum ColumnSortState {
+	None,
+	Ascending,
+	Descending
 }

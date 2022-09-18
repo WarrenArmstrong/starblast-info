@@ -1,4 +1,5 @@
 import Constants from "./Constants"
+import { Lobby, LobbyColumn } from "./Types"
 
 export function getShade(darkness: number) {
 	return interpolateHexColors(Constants.shadeT0, Constants.shadeT1, darkness)
@@ -26,11 +27,11 @@ export function isMobile(): boolean {
 
 export function getTimeElapsedString(seconds: number): string {
 	if (seconds < 60) {
-		return `${seconds} second${s(seconds)} ago`
+		return `${seconds} second${s(seconds)}`
 	} else if (seconds < 3600) {
-		return `${Math.floor(seconds/60)} minute${s(Math.floor(seconds/60))} ago`
+		return `${Math.floor(seconds/60)} minute${s(Math.floor(seconds/60))}`
 	} else {
-		return `${Math.floor(seconds/3600)} hour${s(Math.floor(seconds/3600))} ago`
+		return `${Math.floor(seconds/3600)} hour${s(Math.floor(seconds/3600))}`
 	}
 }
 
@@ -43,4 +44,28 @@ export function capitalize(str: string) {
 		throw new Error("str must not be empty.")
 	}
 	return `${str.charAt(0).toUpperCase()}${str.substring(1)}`
+}
+
+export function getLobbySortFunction(column: LobbyColumn, sortAscending: boolean): (a: Lobby, b: Lobby) => number {
+	switch (column) {
+		case LobbyColumn.Id: return (a, b) => (a.id - b.id) * (sortAscending ? 1 : -1)
+		case LobbyColumn.Location: return (a, b) => a.location.localeCompare(b.location) * (sortAscending ? 1 : -1)
+		case LobbyColumn.Mode: return (a, b) => a.mode.localeCompare(b.mode) * (sortAscending ? 1 : -1)
+		case LobbyColumn.PlayerCount: return (a, b) => (a.playerCount - b.playerCount) * (sortAscending ? 1 : -1)
+		case LobbyColumn.TimeElapsed: return (a, b) => (a.timeElapsed - b.timeElapsed) * (sortAscending ? 1 : -1)
+	}
+}
+
+export function pascalCaseToWords(str: string): string {
+	return getChars(str)
+		.map(segment => segment.toUpperCase() === segment ? ` ${segment}` : segment)
+		.reduce((a,b) => `${a}${b}`)
+}
+
+export function getChars(str: string): Array<string> {
+	const chars: Array<string> = []
+	for (let i = 0; i < str.length; i++) {
+		chars.push(str.substring(i, i+1))
+	}
+	return chars
 }
