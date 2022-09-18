@@ -23,7 +23,7 @@ export default function ColumnHeader(props: Props) {
 		}
 	}
 
-	return <th onClick={onClick} onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)}>
+	return <th className="clickable" onClick={onClick} onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)}>
 		<div className="valign-wrapper">
 			<span>{props.title}</span>
 			<span className="material-symbols-outlined" style={mouseOver || props.sortState !== ColumnSortState.None ? {} : {color: getShade(0)}}>{getIconCode()}

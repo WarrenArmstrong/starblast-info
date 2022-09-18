@@ -56,12 +56,12 @@ export default function LobbyBrowser() {
 									.filter(lobby => selectedModes.has(lobby.mode))
 									.sort(getLobbySortFunction(sortColumn, sortAscending))
 									.map(lobby => 
-										<tr key={lobby.id}>
-											<td>{lobby.id}</td>
-											<td>{lobby.location}</td>
-											<td>{capitalize(lobby.mode)}</td>
-											<td>{lobby.playerCount}</td>
-											<td>{getTimeElapsedString(lobby.timeElapsed)}</td>
+										<tr className="lobby-browser-row" key={lobby.id}>
+											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}</a></td>
+											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
+											<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
+											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>
+											<td><a href={`https://starblast.io/#${lobby.id}`}>{getTimeElapsedString(lobby.timeElapsed)}</a></td>
 										</tr>
 									)
 							}
