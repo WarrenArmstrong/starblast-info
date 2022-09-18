@@ -1,11 +1,10 @@
-import { useState } from "react"
 import { none, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
-import LobbyBrowserRow from "./LobbyBrowserRow"
-import { capitalize, getShade } from "../Utilities"
+import { capitalize, getShade, getTimeElapsedString } from "../Utilities"
 import Constants from "../Constants"
-import { allLocations, allModes, Lobby, Location, Mode } from "../Types"
 import useLobbies from "../hooks/useLobbies"
+import { allLocations, allModes, Lobby, Location, Mode } from "../Types"
+import { useState } from "react"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies()
@@ -33,6 +32,8 @@ export default function LobbyBrowser() {
 	return <div>
 		<h1 className="center" style={{color: Constants.textColor}}>System Browser</h1>
 		<div style={{color: Constants.textColor, backgroundColor: getShade(0)}}>
+
+
 			<div style={{overflow: "auto"}}>
 				<span className="valign-wrapper" style={{float: "left", padding: 10, fontWeight: "bold", width: 100}}>Locations:</span>
 				{
@@ -55,21 +56,47 @@ export default function LobbyBrowser() {
 					})
 				}
 			</div>
-		</div>
-		<div style={{color: Constants.textColor, backgroundColor: getShade(0)}}>
+
+			<table style={{borderTopWidth: 2, borderTopStyle: "solid", borderColor: getShade(1)}}>
+				<thead style={{borderBottomWidth: 2, borderBottomStyle: "solid", borderColor: getShade(1)}}>
+					<tr>
+						<th>Id</th>
+						<th>Location</th>
+						<th>Mode</th>
+						<th>Players</th>
+						<th>Time Started</th>
+					</tr>
+				</thead>
+				{
+					lobbies.isDefined ? (
+						<tbody>
+							{
+								lobbies.get
+									.filter(lobby => selectedLocations.has(lobby.location))
+									.filter(lobby => selectedModes.has(lobby.mode))
+									.map(lobby => 
+										<tr>
+											<td>{lobby.id}</td>
+											<td>{lobby.location}</td>
+											<td>{capitalize(lobby.mode)}</td>
+											<td>{lobby.playerCount}</td>
+											<td>{getTimeElapsedString(lobby.timeElapsed)}</td>
+										</tr>
+									)
+							}
+						</tbody>
+					) : (
+						<tbody/>
+					)
+				}
+			</table>
 			{
-				lobbies.isDefined ? (
-					lobbies.get
-						.filter(lobby => {
-							console.log(lobby.location)
-							return selectedLocations.has(lobby.location)
-						})
-						.filter(lobby => selectedModes.has(lobby.mode))
-						.map(lobby => <LobbyBrowserRow key={lobby.id} lobby={lobby}/>)
+				lobbies.isEmpty ? (
+					<div style={{height: 100, width: "100%", paddingTop: 50, paddingBottom: 50}}>
+						<LoadingSpinner/>
+					</div>
 				) : (
-					Array.from(Array(3).keys()).map(key => <div key={key} style={{height: "64pt", padding: "10pt", borderBottomWidth: "2pt", borderBottomStyle: "solid", borderColor: getShade(1)}}>
-						<LoadingSpinner color={Constants.textColor}/>
-					</div>)
+					<div/>
 				)
 			}
 		</div>
