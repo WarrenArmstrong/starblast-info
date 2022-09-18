@@ -1,7 +1,8 @@
-import { useState } from "react"
+import usePersistentState from "./usePersistentState"
 
-export default function useFilters(allFilters: Array<string>): [Set<string>, (filter: string) => void] {
-	const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set<string>(allFilters))
+export default function useFilters(allFilters: Array<string>, localStorageKey: string): [Set<string>, (filter: string) => void] {
+	const [selectedFiltersArray, setSelectedFiltersArray] = usePersistentState<Array<string>>(allFilters, localStorageKey)
+	const selectedFilters: Set<string> = new Set(selectedFiltersArray)
 
 	function toggleFilter(filter: string) {
 		if (selectedFilters.has(filter)) {
@@ -9,7 +10,7 @@ export default function useFilters(allFilters: Array<string>): [Set<string>, (fi
 		} else {
 			selectedFilters.add(filter)
 		}
-		setSelectedFilters(new Set(selectedFilters))
+		setSelectedFiltersArray(Array.from(selectedFilters))
 	}
 
 	return [selectedFilters, toggleFilter]

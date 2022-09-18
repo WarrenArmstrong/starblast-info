@@ -7,14 +7,14 @@ import { allLobbyColumns, allLocations, allModes, ColumnSortState, Lobby, LobbyC
 import useFilters from "../hooks/useFilters"
 import ToggleFilters from "./ToggleFilters"
 import ColumnHeader from "./ColumnHeader"
-import { useState } from "react"
+import usePersistentState from "../hooks/usePersistentState"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies()
-	const [selectedLocations, toggleLocation] = useFilters(allLocations)
-	const [selectedModes, toggleMode] = useFilters(allModes)
-	const [sortColumn, setSortColumn] = useState<LobbyColumn>(LobbyColumn.TimeElapsed)
-	const [sortAscending, setSortAscending] = useState<boolean>(true)
+	const [selectedLocations, toggleLocation] = useFilters(allLocations, "starblast.info:selectedLocations")
+	const [selectedModes, toggleMode] = useFilters(allModes, "starblast.info:selectedModes")
+	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "starblast.info:sortColumn")
+	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "starblast.info:sortAscending")
 
 	function updateSort(column: LobbyColumn) {
 		return (ascending: boolean) => {

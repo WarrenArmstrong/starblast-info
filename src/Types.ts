@@ -43,3 +43,5 @@ export enum ColumnSortState {
 	Ascending,
 	Descending
 }
+
+export type Persistable = string | number | boolean | Array<Persistable>
