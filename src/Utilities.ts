@@ -6,7 +6,7 @@ export function getShade(darkness: number) {
 
 export function interpolateHexColors(color0Hex: string, color1Hex: string, t: number) {
 	[color0Hex, color1Hex].forEach(colorHex => {
-		if (colorHex === null || colorHex.length !== 7 || colorHex.charAt(0) != "#") {
+		if (colorHex === null || colorHex.length !== 7 || colorHex.charAt(0) !== "#") {
 			throw new Error("colorHex must start with '#' and be 7 characters long.")
 		}
 	})
@@ -26,10 +26,21 @@ export function isMobile(): boolean {
 
 export function getTimeElapsedString(seconds: number): string {
 	if (seconds < 60) {
-		return `${seconds} seconds ago`
+		return `${seconds} second${s(seconds)} ago`
 	} else if (seconds < 3600) {
-		return `${Math.floor(seconds/60)} minutes ago`
+		return `${Math.floor(seconds/60)} minute${s(Math.floor(seconds/60))} ago`
 	} else {
-		return `${Math.floor(seconds/3600)} hours ago`
+		return `${Math.floor(seconds/3600)} hour${s(Math.floor(seconds/3600))} ago`
 	}
+}
+
+export function s(quantity: number) {
+	return Math.abs(quantity) === 1 ? "" :  "s"
+}
+
+export function capitalize(str: string) {
+	if (str.length < 1) {
+		throw new Error("str must not be empty.")
+	}
+	return `${str.charAt(0).toUpperCase()}${str.substring(1)}`
 }

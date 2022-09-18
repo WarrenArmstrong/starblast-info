@@ -52,6 +52,7 @@ export default function useLobbies() {
 	}
 
 	useEffect(() => {
+		fetchLobbies()
 		const interval = setInterval(fetchLobbies, 1000)
 		return () => clearInterval(interval)
 	}, [])

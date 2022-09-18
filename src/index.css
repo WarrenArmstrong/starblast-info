@@ -37,3 +37,8 @@ a:link, a:visited {
     color: inherit;
     cursor: pointer;
 }
+
+.clickable {
+	cursor: pointer;
+	user-select: none;
+}
