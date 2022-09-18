@@ -1,4 +1,3 @@
-
 export enum Location {
 	America,
 	Europe,
@@ -12,31 +11,10 @@ export enum Mode {
 	invasion
 }
 
-export type System = {
-	name: string,
+export type Lobby = {
 	id: number,
-	mode: Mode,
-	players: number,
-	unlisted: boolean,
-	open: boolean,
-	survival: boolean,
-	time: number,
-	criminal_activity: number,
-}
-
-export type Usage = {
-	cpu: number,
-	memory: number,
-	ctime: number,
-	elapsed: number,
-	timestamp: number,
-	pid: number,
-	ppid: number
-}
-
-export type Server = {
+	playerCount: number,
 	location: Location,
-	address: string,
-	current_players: number,
-	systems: Array<System>
+	mode: Mode,
+	timeElapsed: number
 }
