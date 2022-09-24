@@ -11,8 +11,8 @@ export default function usePersistentState<T extends Persistable>(defaultValue: 
 	})
 
 	function setPersistentState(t: T) {
-		localStorage.setItem(localStorageKey, JSON.stringify(t))
 		setReactState(t)
+		localStorage.setItem(localStorageKey, JSON.stringify(t))
 	}
 
 	return [reactState, setPersistentState]
