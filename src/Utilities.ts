@@ -1,3 +1,4 @@
+import { none, some } from "ts-option"
 import Constants from "./Constants"
 import { Lobby, LobbyColumn } from "./Types"
 
@@ -25,14 +26,16 @@ export function isMobile(): boolean {
 	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
-export function getTimeElapsedString(seconds: number): string {
-	if (seconds < 60) {
-		return `${seconds} second${s(seconds)}`
-	} else if (seconds < 3600) {
-		return `${Math.floor(seconds/60)} minute${s(Math.floor(seconds/60))}`
-	} else {
-		return `${Math.floor(seconds/3600)} hour${s(Math.floor(seconds/3600))}`
-	}
+export function getTimeElapsedString(totalSeconds: number): string {
+	const hours = Math.floor(totalSeconds / 3600)
+	const minutes = Math.floor((totalSeconds % 3600) / 60)
+	const seconds = totalSeconds % 60
+
+	const hoursStr = hours > 0 ? some(`${hours} hour${s(hours)}`) : none
+	const minutesStr = minutes > 0 ? some(`${minutes} minute${s(minutes)}`) : none
+	const secondsStr = hoursStr.isDefined || minutesStr.isDefined ? none : some(`${seconds} second${s(seconds)}`)
+
+	return [hoursStr, minutesStr, secondsStr].filter(x => x.isDefined).map(x => x.get).join(", ")
 }
 
 export function s(quantity: number) {
