@@ -11,10 +11,10 @@ import usePersistentState from "../hooks/usePersistentState"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies()
-	const [selectedLocations, toggleLocation] = useFilters(allLocations, "starblast.info:selectedLocations")
-	const [selectedModes, toggleMode] = useFilters(allModes, "starblast.info:selectedModes")
-	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "starblast.info:sortColumn")
-	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "starblast.info:sortAscending")
+	const [selectedLocations, toggleLocation] = useFilters(allLocations, "starblast.info:lobbyBrowser:selectedLocations")
+	const [selectedModes, toggleMode] = useFilters(allModes, "starblast.info:lobbyBrowser:selectedModes")
+	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "starblast.info:lobbyBrowser:sortColumn")
+	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "starblast.info:lobbyBrowser:sortAscending")
 
 	function updateSort(column: LobbyColumn) {
 		return (ascending: boolean) => {
