@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { ColumnSortState } from "../Types"
-import { getShade } from "../Utilities"
+import { getShade, isMobile } from "../Utilities"
 
 interface Props {
 	title: string,
@@ -26,8 +26,11 @@ export default function ColumnHeader(props: Props) {
 	return <th className="clickable" onClick={onClick} onMouseEnter={() => setMouseOver(true)} onMouseLeave={() => setMouseOver(false)}>
 		<div className="valign-wrapper">
 			<span>{props.title}</span>
-			<span className="material-symbols-outlined" style={mouseOver || props.sortState !== ColumnSortState.None ? {} : {color: getShade(0)}}>{getIconCode()}
-			</span>
+			{
+				(!isMobile() || props.sortState !== ColumnSortState.None) ? <span className="material-symbols-outlined"
+					style={mouseOver || props.sortState !== ColumnSortState.None ? {} : {color: getShade(0)}}>{getIconCode()}
+				</span> : <span/>
+			}
 		</div>
 	</th>
 }
