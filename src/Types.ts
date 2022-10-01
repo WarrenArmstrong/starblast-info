@@ -24,7 +24,8 @@ export type Lobby = {
 	playerCount: number,
 	location: Location,
 	mode: Mode,
-	timeElapsed: number
+	timeElapsed: number,
+	fromCache: boolean
 }
 
 export enum LobbyColumn {
@@ -43,5 +44,3 @@ export enum ColumnSortState {
 	Ascending,
 	Descending
 }
-
-export type Persistable = string | number | boolean | Array<Persistable>

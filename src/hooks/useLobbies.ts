@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Option, some, none } from "ts-option"
+import Constants from "../Constants"
 import { Lobby, Location, Mode } from "../Types"
-import { capitalize } from "../Utilities"
 
 type System = {
 	name: string,
@@ -29,34 +29,56 @@ type Server = {
 	location: Location,
 	address: string,
 	current_players: number,
-	systems: Array<System>
+	systems: Array<System>,
+	fetched_at: number,
+	from_cache: boolean
 }
 
 export default function useLobbies() {
-	const [lobbies, setLobbies] = useState<Option<Array<Lobby>>>(none)
+	const [servers, setServers] = useState<Option<Array<Server>>>(none)
 
-	async function fetchLobbies() {
+	async function refreshServers() {
 		const res: Response = await fetch("https://starblast.io/simstatus.json")
-		const servers: Array<Server> = await res.json() as Array<Server>
-		const lobbies: Array<Lobby> = servers.flatMap(server => {
+		const newServers: Array<Server> = (await res.json() as Array<Server>).map(newServer => {
+			newServer.fetched_at = Date.now()
+			return newServer
+		})
+		setServers(servers => {
+			if (servers.isDefined) {
+				servers.get.forEach(server => {
+					if (!newServers.find(newServer => newServer.address === server.address)
+						&& Date.now() - server.fetched_at < Constants.maxStatusServerCacheTime) {
+						server.from_cache = true
+						newServers.push(server)
+					}
+				})
+			}
+			return some(newServers)
+		})
+	}
+
+	useEffect(() => {
+		refreshServers()
+		const interval = setInterval(refreshServers, Constants.statusFetchFrequencyMs)
+		return () => clearInterval(interval)
+	}, [])
+
+	const lobbies: Option<Array<Lobby>> = servers.isDefined ? (
+		some(servers.get.flatMap(server => {
 			return server.systems.map(system => {
 				return {
 					id: system.id,
 					playerCount: system.players,
 					location: server.location,
 					mode: system.mode,
-					timeElapsed: system.time
+					timeElapsed: system.time + Math.floor((Date.now() - server.fetched_at)/1000),
+					fromCache: server.from_cache
 				}
 			})
-		})
-		setLobbies(some(lobbies))
-	}
-
-	useEffect(() => {
-		fetchLobbies()
-		const interval = setInterval(fetchLobbies, 1000)
-		return () => clearInterval(interval)
-	}, [])
+		}))
+	) : (
+		none
+	)
 
 	return lobbies
 }
