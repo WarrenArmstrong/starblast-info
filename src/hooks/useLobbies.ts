@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Option, some, none } from "ts-option"
 import Constants from "../Constants"
 import { Lobby, Location, Mode } from "../Types"
+import { optionWrapSetStateAction } from "../Utilities"
+import usePersistentState from "./usePersistentState"
 
 type System = {
 	name: string,
@@ -34,8 +36,9 @@ type Server = {
 	from_cache: boolean
 }
 
-export default function useLobbies() {
-	const [servers, setServers] = useState<Option<Array<Server>>>(none)
+export default function useLobbies(localStorageKey: string) {
+	const [serversOrUndefined, setServersOrUndefined] = usePersistentState<Array<Server> | undefined>(undefined, localStorageKey)
+	const [servers, setServers] = optionWrapSetStateAction<Array<Server>>(serversOrUndefined, setServersOrUndefined)
 
 	async function refreshServers() {
 		const res: Response = await fetch("https://starblast.io/simstatus.json")

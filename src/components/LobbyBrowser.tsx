@@ -10,7 +10,7 @@ import ColumnHeader from "./ColumnHeader"
 import usePersistentState from "../hooks/usePersistentState"
 
 export default function LobbyBrowser() {
-	const lobbies: Option<Array<Lobby>> = useLobbies()
+	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.servers")
 	const [selectedLocations, toggleLocation] = useFilters(allLocations, "lobbyBrowser.selectedLocations")
 	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")

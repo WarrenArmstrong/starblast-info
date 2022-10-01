@@ -1,4 +1,4 @@
-import { none, some } from "ts-option"
+import { none, option, Option, some } from "ts-option"
 import Constants from "./Constants"
 import { Lobby, LobbyColumn } from "./Types"
 
@@ -71,4 +71,17 @@ export function getChars(str: string): Array<string> {
 		chars.push(str.substring(i, i+1))
 	}
 	return chars
+}
+
+export function optionWrapSetStateAction<T>(state: T | undefined, setState: React.Dispatch<React.SetStateAction<T | undefined>>): [Option<T>, React.Dispatch<React.SetStateAction<Option<T>>>] {
+	const optionSetState = function wrappedDispatch(setStateAction: Option<T> | ((t: Option<T>) => Option<T>)) {
+		const optionT: Option<T> = typeof setStateAction === "function" ? (
+			(setStateAction as (t: Option<T>) => Option<T>)(option(state))
+		) : (
+			setStateAction
+		)
+		setState(optionT.orUndefined)
+	}
+
+	return [option(state), optionSetState]
 }
