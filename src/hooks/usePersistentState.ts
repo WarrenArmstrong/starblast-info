@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { option } from "ts-option"
-import { Persistable } from "../Types"
 
-export default function usePersistentState<T extends Persistable>(defaultValue: T, localStorageKey: string): [T, (t: T) => void] {
+export default function usePersistentState<T>(defaultValue: T, localStorageKey: string): [T, React.Dispatch<React.SetStateAction<T>>] {
 	const [reactState, setReactState] = useState<T>(() => {
 		return option(localStorage.getItem(localStorageKey)).match({
 			some: value => JSON.parse(value) as T,
@@ -10,7 +9,12 @@ export default function usePersistentState<T extends Persistable>(defaultValue: 
 		})
 	})
 
-	function setPersistentState(t: T) {
+	function setPersistentState(setStateAction: React.SetStateAction<T>) {
+		const t: T = typeof setStateAction === "function" ? (
+			(setStateAction as (arg0: T) => T)(reactState)
+		) : (
+			setStateAction
+		)
 		setReactState(t)
 		localStorage.setItem(localStorageKey, JSON.stringify(t))
 	}
