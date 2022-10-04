@@ -36,10 +36,14 @@ export default function LobbyBrowser() {
 	const cardSize = isMobile() ? 150 : 300
 	const cardMargin = 10
 
-	const filteredLobbies: Array<Lobby> = lobbies.get
-		.filter(lobby => selectedLocations.has(lobby.location))
-		.filter(lobby => selectedModes.has(lobby.mode))
-		.sort(getLobbySortFunction(sortColumn, sortAscending))
+	const filteredLobbies: Option<Array<Lobby>> = lobbies.isDefined ? (
+		some(lobbies.get
+			.filter(lobby => selectedLocations.has(lobby.location))
+			.filter(lobby => selectedModes.has(lobby.mode))
+			.sort(getLobbySortFunction(sortColumn, sortAscending)))
+	) : (
+		none
+	)
 
 	return <div style={{color: Constants.textColor}}>
 		<h1 className="center" >System Browser</h1>
@@ -53,9 +57,13 @@ export default function LobbyBrowser() {
 		{
 			useCardView ? (
 				<div style={{display: "grid", justifyContent: "center", padding: "initial", 
-					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+cardMargin*2}px, max-content))`, marginTop: 10}}>
+					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+cardMargin*2}px, max-content))`, marginTop: cardMargin}}>
 					{
-						filteredLobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} cardMargin={cardMargin}/>)
+						filteredLobbies.isDefined ? (
+							filteredLobbies.get.map(lobby => <LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} cardMargin={cardMargin}/>)
+						) : (
+							<div/>
+						)
 					}
 				</div>
 			) : (
@@ -72,19 +80,18 @@ export default function LobbyBrowser() {
 							</tr>
 						</thead>
 						{
-							lobbies.isDefined ? (
+							filteredLobbies.isDefined ? (
 								<tbody>
 									{
-										filteredLobbies
-											.map(lobby => 
-												<tr className="lobby-browser-row" key={lobby.id}>
-													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}<sup style={{fontSize: "x-small"}}>{lobby.fromCache ? "*" : ""}</sup></a></td>
-													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
-													<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
-													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>
-													<td><a href={`https://starblast.io/#${lobby.id}`}>{getTimeElapsedString(lobby.timeElapsed)}</a></td>
-												</tr>
-											)
+										filteredLobbies.get.map(lobby => 
+											<tr className="lobby-browser-row" key={lobby.id}>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}<sup style={{fontSize: "x-small"}}>{lobby.fromCache ? "*" : ""}</sup></a></td>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{getTimeElapsedString(lobby.timeElapsed)}</a></td>
+											</tr>
+										)
 									}
 								</tbody>
 							) : (
@@ -92,16 +99,16 @@ export default function LobbyBrowser() {
 							)
 						}
 					</table>
-					{
-						lobbies.isEmpty ? (
-							<div style={{height: 100, width: "100%", paddingTop: 50, paddingBottom: 50}}>
-								<LoadingSpinner/>
-							</div>
-						) : (
-							<div/>
-						)
-					}
 				</div>
+			)
+		}
+		{
+			filteredLobbies.isEmpty ? (
+				<div style={{height: 100, width: "100%", paddingTop: 50, paddingBottom: 50}}>
+					<LoadingSpinner/>
+				</div>
+			) : (
+				<div/>
 			)
 		}
 	</div>
