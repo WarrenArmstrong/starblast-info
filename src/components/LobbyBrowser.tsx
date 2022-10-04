@@ -1,6 +1,6 @@
 import { none, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
-import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, pascalCaseToWords } from "../Utilities"
+import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, isMobile, pascalCaseToWords } from "../Utilities"
 import Constants from "../Constants"
 import useLobbies from "../hooks/useLobbies"
 import { allLobbyColumns, allLocations, allModes, ColumnSortState, Lobby, LobbyColumn } from "../Types"
@@ -8,6 +8,7 @@ import useFilters from "../hooks/useFilters"
 import ToggleFilters from "./ToggleFilters"
 import ColumnHeader from "./ColumnHeader"
 import usePersistentState from "../hooks/usePersistentState"
+import LobbyCard from "./LobbyCard"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.servers")
@@ -15,6 +16,7 @@ export default function LobbyBrowser() {
 	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")
 	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "lobbyBrowser.sortAscending")
+	const [useCardView, setUseCardView] = usePersistentState<boolean>(false, "lobbyBrowser.useCardView")
 
 	function updateSort(column: LobbyColumn) {
 		return (ascending: boolean) => {
@@ -31,55 +33,76 @@ export default function LobbyBrowser() {
 		}
 	}
 
-	return <div>
-		<h1 className="center" style={{color: Constants.textColor}}>System Browser</h1>
-		<div style={{color: Constants.textColor, backgroundColor: getShade(0)}}>
-			<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
-			<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
-			<table style={{borderTopWidth: 2, borderTopStyle: "solid", borderColor: getShade(1)}}>
-				<thead style={{borderBottomWidth: 2, borderBottomStyle: "solid", borderColor: getShade(1)}}>
-					<tr>
-						{
-							allLobbyColumns.map(column => <ColumnHeader key={column}
-								title={pascalCaseToWords(LobbyColumn[column])} sortState={getColumnSortState(column)}
-								updateSort={updateSort(column)}
-							/>)
-						}
-					</tr>
-				</thead>
-				{
-					lobbies.isDefined ? (
-						<tbody>
-							{
-								lobbies.get
-									.filter(lobby => selectedLocations.has(lobby.location))
-									.filter(lobby => selectedModes.has(lobby.mode))
-									.sort(getLobbySortFunction(sortColumn, sortAscending))
-									.map(lobby => 
-										<tr className="lobby-browser-row" key={lobby.id}>
-											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}<sup style={{fontSize: "xxx-small"}}>{lobby.fromCache ? "*" : ""}</sup></a></td>
-											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
-											<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
-											<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>
-											<td><a href={`https://starblast.io/#${lobby.id}`}>{getTimeElapsedString(lobby.timeElapsed)}</a></td>
-										</tr>
-									)
-							}
-						</tbody>
-					) : (
-						<tbody/>
-					)
-				}
-			</table>
-			{
-				lobbies.isEmpty ? (
-					<div style={{height: 100, width: "100%", paddingTop: 50, paddingBottom: 50}}>
-						<LoadingSpinner/>
-					</div>
-				) : (
-					<div/>
-				)
-			}
+	const cardSize = isMobile() ? 150 : 300
+	const cardMargin = 10
+
+	const filteredLobbies: Array<Lobby> = lobbies.get
+		.filter(lobby => selectedLocations.has(lobby.location))
+		.filter(lobby => selectedModes.has(lobby.mode))
+		.sort(getLobbySortFunction(sortColumn, sortAscending))
+
+	return <div style={{color: Constants.textColor}}>
+		<h1 className="center" >System Browser</h1>
+		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
+		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
+		<div style={{display: "flex", justifyContent: "flex-end", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
+			<span className="clickable material-symbols-outlined" onClick={() => setUseCardView(!useCardView)} style={{padding: 10}}>
+				{useCardView ? "view_module" : "view_list"}
+			</span>
 		</div>
+		{
+			useCardView ? (
+				<div style={{display: "grid", justifyContent: "center", padding: "initial", 
+					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+cardMargin*2}px, max-content))`, marginTop: 10}}>
+					{
+						filteredLobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} cardMargin={cardMargin}/>)
+					}
+				</div>
+			) : (
+				<div>
+					<table style={{backgroundColor: getShade(0), borderTopWidth: 2, borderTopStyle: "solid", borderColor: getShade(1)}}>
+						<thead style={{borderBottomWidth: 2, borderBottomStyle: "solid", borderColor: getShade(1)}}>
+							<tr>
+								{
+									allLobbyColumns.map(column => <ColumnHeader key={column}
+										title={pascalCaseToWords(LobbyColumn[column])} sortState={getColumnSortState(column)}
+										updateSort={updateSort(column)}
+									/>)
+								}
+							</tr>
+						</thead>
+						{
+							lobbies.isDefined ? (
+								<tbody>
+									{
+										filteredLobbies
+											.map(lobby => 
+												<tr className="lobby-browser-row" key={lobby.id}>
+													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}<sup style={{fontSize: "x-small"}}>{lobby.fromCache ? "*" : ""}</sup></a></td>
+													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
+													<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
+													<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>
+													<td><a href={`https://starblast.io/#${lobby.id}`}>{getTimeElapsedString(lobby.timeElapsed)}</a></td>
+												</tr>
+											)
+									}
+								</tbody>
+							) : (
+								<tbody/>
+							)
+						}
+					</table>
+					{
+						lobbies.isEmpty ? (
+							<div style={{height: 100, width: "100%", paddingTop: 50, paddingBottom: 50}}>
+								<LoadingSpinner/>
+							</div>
+						) : (
+							<div/>
+						)
+					}
+				</div>
+			)
+		}
 	</div>
 }
