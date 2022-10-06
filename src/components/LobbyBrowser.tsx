@@ -11,7 +11,7 @@ import usePersistentState from "../hooks/usePersistentState"
 import LobbyCard from "./LobbyCard"
 
 export default function LobbyBrowser() {
-	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.servers")
+	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.lobbies")
 	const [selectedLocations, toggleLocation] = useFilters(allLocations, "lobbyBrowser.selectedLocations")
 	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")

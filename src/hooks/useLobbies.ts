@@ -31,57 +31,48 @@ type Server = {
 	location: Location,
 	address: string,
 	current_players: number,
-	systems: Array<System>,
-	fetched_at: number,
-	from_cache: boolean
+	systems: Array<System>
 }
 
 export default function useLobbies(localStorageKey: string) {
-	const [serversOrUndefined, setServersOrUndefined] = usePersistentState<Array<Server> | undefined>(undefined, localStorageKey)
-	const [servers, setServers] = optionWrapSetStateAction<Array<Server>>(serversOrUndefined, setServersOrUndefined)
+	const [lobbiesOrUndefined, setLobbiesOrUndefined] = usePersistentState<Array<Lobby> | undefined>(undefined, localStorageKey)
+	const [lobbies, setLobbies] = optionWrapSetStateAction<Array<Lobby>>(lobbiesOrUndefined, setLobbiesOrUndefined)
 
-	async function refreshServers() {
+	async function refreshLobbies() {
 		const res: Response = await fetch("https://starblast.io/simstatus.json")
-		const newServers: Array<Server> = (await res.json() as Array<Server>).map(newServer => {
-			newServer.fetched_at = Date.now()
-			return newServer
-		})
-		setServers(servers => {
-			if (servers.isDefined) {
-				servers.get.forEach(server => {
-					if (!newServers.find(newServer => newServer.address === server.address)
-						&& Date.now() - server.fetched_at < Constants.maxStatusServerCacheTime) {
-						server.from_cache = true
-						newServers.push(server)
-					}
-				})
-			}
-			return some(newServers)
-		})
-	}
-
-	useEffect(() => {
-		refreshServers()
-		const interval = setInterval(refreshServers, Constants.statusFetchFrequencyMs)
-		return () => clearInterval(interval)
-	}, [])
-
-	const lobbies: Option<Array<Lobby>> = servers.isDefined ? (
-		some(servers.get.flatMap(server => {
+		const newLobbies: Array<Lobby> = (await res.json() as Array<Server>).flatMap(server => {
 			return server.systems.map(system => {
 				return {
 					id: system.id,
 					playerCount: system.players,
 					location: server.location,
 					mode: system.mode,
-					timeElapsed: system.time + Math.floor((Date.now() - server.fetched_at)/1000),
-					fromCache: server.from_cache
+					timeElapsed: system.time,
+					fetchedAt: Date.now(),
+					fromCache: false,
+					serverIp: server.address
 				}
 			})
-		}))
-	) : (
-		none
-	)
+		})
+		setLobbies(lobbies => {
+			if (lobbies.isDefined) {
+				lobbies.get.forEach(lobby => {
+					if (!newLobbies.find(newLobby => newLobby.id === newLobby.id)
+						&& Date.now() - lobby.fetchedAt < Constants.maxLobbyCacheTimeMs) {
+						lobby.fromCache = true
+						newLobbies.push(lobby)
+					}
+				})
+			}
+			return some(newLobbies)
+		})
+	}
+
+	useEffect(() => {
+		refreshLobbies()
+		const interval = setInterval(refreshLobbies, Constants.statusFetchFrequencyMs)
+		return () => clearInterval(interval)
+	}, [])
 
 	return lobbies
 }

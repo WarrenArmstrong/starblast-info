@@ -25,7 +25,9 @@ export type Lobby = {
 	location: Location,
 	mode: Mode,
 	timeElapsed: number,
-	fromCache: boolean
+	fetchedAt: number,
+	fromCache: boolean,
+	serverIp: string
 }
 
 export enum LobbyColumn {
