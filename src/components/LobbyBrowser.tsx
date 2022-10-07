@@ -33,8 +33,8 @@ export default function LobbyBrowser() {
 		}
 	}
 
-	const cardSize = isMobile() ? 150 : 300
-	const cardMargin = 10
+	const cardSize = isMobile() ? 300 : 400
+	const cardMargin = cardSize/40
 
 	const filteredLobbies: Option<Array<Lobby>> = lobbies.isDefined ? (
 		some(lobbies.get

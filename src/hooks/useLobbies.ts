@@ -50,7 +50,7 @@ export default function useLobbies(localStorageKey: string) {
 					timeElapsed: system.time,
 					fetchedAt: Date.now(),
 					fromCache: false,
-					serverIp: server.address
+					socketAddress: server.address
 				}
 			})
 		})

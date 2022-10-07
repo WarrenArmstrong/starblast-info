@@ -1,6 +1,7 @@
 import { none, option, Option, some } from "ts-option"
 import Constants from "./Constants"
 import { Lobby, LobbyColumn } from "./Types"
+import convert from "color-convert"
 
 export function getShade(darkness: number) {
 	return interpolateHexColors(Constants.shadeT0, Constants.shadeT1, darkness)
@@ -84,4 +85,36 @@ export function optionWrapSetStateAction<T>(state: T | undefined, setState: Reac
 	}
 
 	return [option(state), optionSetState]
+}
+
+export function isOnScreen(element: HTMLElement) {
+	var rect = element.getBoundingClientRect()
+	var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight)
+	return !(rect.bottom < 0 || rect.top - viewHeight >= 0)
+}
+
+export function getShadeFromHue(hue: number) {
+	return "#"+convert.hsl.hex([hue, Constants.teamColorSaturation, Constants.teamColorLightness])
+}
+
+export function abbreviate(text: string, maxLength: number): string {
+	if (maxLength < 3) {
+		throw new Error("Max length must be 3 or greater.")
+	}
+	if (text.length <= maxLength) {
+		return text
+	}
+
+	const words = text.split(" ")
+	if (words[words.length-1].length > 2) {
+		words[words.length-1] = words[words.length-1].substring(0,2)+"."
+	}
+
+	if (words.join(" ").length <= maxLength) {
+		return words.join(" ")
+	}
+
+	words.pop()
+
+	return abbreviate(words.join(" "), maxLength)
 }

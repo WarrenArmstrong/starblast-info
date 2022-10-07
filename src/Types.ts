@@ -27,7 +27,7 @@ export type Lobby = {
 	timeElapsed: number,
 	fetchedAt: number,
 	fromCache: boolean,
-	serverIp: string
+	socketAddress: string
 }
 
 export enum LobbyColumn {
@@ -45,4 +45,19 @@ export enum ColumnSortState {
 	None,
 	Ascending,
 	Descending
+}
+
+export type SystemInfo = {
+	factions: Array<Faction>
+	players: Array<Player>
+}
+
+export type Faction = {
+	name: string,
+	hue: number
+}
+
+export type Player = {
+	name: string,
+	hue: number
 }
