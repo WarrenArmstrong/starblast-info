@@ -13,7 +13,8 @@ export default function useSystemInfo(lobby: Lobby, card: React.RefObject<HTMLDi
 	async function refreshSystemInfo() {
 		const cardOption: Option<HTMLDivElement> = option(card.current)
 		if (!requestInFlight.current && cardOption.isDefined && isOnScreen(cardOption.get)
-			&& ((systemInfo.isDefined && systemInfo.get.fromDaemon) || Date.now() - lastRequestTime.current > Constants.systemInfoNonDaemonFetchFrequencyMs)) {
+			&& ((systemInfo.isDefined && systemInfo.get.fromDaemon) || Date.now() - lastRequestTime.current > Constants.systemInfoNonDaemonFetchFrequencyMs)
+			&& (lobby.mode === "team")) {
 			try {
 				requestInFlight.current = true
 				lastRequestTime.current = Date.now()
