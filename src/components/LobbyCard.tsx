@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import useSystemInfo from "../hooks/useSystemInfo"
 import { Lobby } from "../Types"
-import { abbreviate, capitalize, getShade, getShadeFromHue, getTimeElapsedString, isOnScreen } from "../Utilities"
+import { abbreviate, capitalize, getShade, getShadeFromHue, getTimeElapsedString } from "../Utilities"
 import LoadingSpinner from "./LoadingSpinner"
 
 interface Props {

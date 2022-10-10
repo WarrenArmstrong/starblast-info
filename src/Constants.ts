@@ -6,6 +6,8 @@ export default {
 	teamColorSaturation: 22,
 	teamColorLightness: 50,
 	maxLobbyCacheTimeMs: 2 * 60 * 1000,
-	statusFetchFrequencyMs: 1000,
+	simStatusFetchFrequencyMs: 10 * 1000,
+	systemInfoFetchFrequencyMs: 1000,
+	systemInfoNonDaemonFetchFrequencyMs: 10 * 1000,
 	systemInfoEndpoint: "https://z4ji7p36rc.execute-api.us-east-2.amazonaws.com/Prod"
 }

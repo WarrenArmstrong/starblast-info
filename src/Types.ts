@@ -48,6 +48,7 @@ export enum ColumnSortState {
 }
 
 export type SystemInfo = {
+	fromDaemon: boolean
 	factions: Array<Faction>
 	players: Array<Player>
 }

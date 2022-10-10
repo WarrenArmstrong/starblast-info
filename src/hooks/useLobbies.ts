@@ -70,7 +70,7 @@ export default function useLobbies(localStorageKey: string) {
 
 	useEffect(() => {
 		refreshLobbies()
-		const interval = setInterval(refreshLobbies, Constants.statusFetchFrequencyMs)
+		const interval = setInterval(refreshLobbies, Constants.simStatusFetchFrequencyMs)
 		return () => clearInterval(interval)
 	}, [])
 
