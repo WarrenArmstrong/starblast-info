@@ -1,7 +1,6 @@
 enum LocationEnum {
 	America,
 	Asia,
-	Brazil,
 	Europe
 }
 export type Location = keyof typeof LocationEnum
