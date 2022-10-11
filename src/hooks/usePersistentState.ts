@@ -10,13 +10,15 @@ export default function usePersistentState<T>(defaultValue: T, localStorageKey: 
 	})
 
 	function setPersistentState(setStateAction: React.SetStateAction<T>) {
-		const t: T = typeof setStateAction === "function" ? (
-			(setStateAction as (arg0: T) => T)(reactState)
-		) : (
-			setStateAction
-		)
-		setReactState(t)
-		localStorage.setItem(localStorageKey, JSON.stringify(t))
+		setReactState(oldReactState => {
+			const t: T = typeof setStateAction === "function" ? (
+				(setStateAction as (arg0: T) => T)(oldReactState)
+			) : (
+				setStateAction
+			)
+			localStorage.setItem(localStorageKey, JSON.stringify(t))
+			return t
+		})
 	}
 
 	return [reactState, setPersistentState]

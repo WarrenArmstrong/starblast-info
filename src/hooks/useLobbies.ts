@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Option, some, none } from "ts-option"
+import { Option, some, none, option } from "ts-option"
 import Constants from "../Constants"
 import { Lobby, Location, Mode } from "../Types"
 import { optionWrapSetStateAction } from "../Utilities"
@@ -54,16 +54,14 @@ export default function useLobbies(localStorageKey: string) {
 				}
 			})
 		})
-		setLobbies(lobbies => {
-			if (lobbies.isDefined) {
-				lobbies.get.forEach(lobby => {
-					if (!newLobbies.find(newLobby => newLobby.id === newLobby.id)
-						&& Date.now() - lobby.fetchedAt < Constants.maxLobbyCacheTimeMs) {
-						lobby.fromCache = true
-						newLobbies.push(lobby)
-					}
-				})
-			}
+		setLobbies(oldLobbies => {
+			oldLobbies.getOrElseValue([]).forEach(oldLobby => {
+				if (!newLobbies.find(newLobby => newLobby.id === oldLobby.id)
+					&& Date.now() - oldLobby.fetchedAt < Constants.maxLobbyCacheTimeMs) {
+					oldLobby.fromCache = true
+					newLobbies.push(oldLobby)
+				}
+			})
 			return some(newLobbies)
 		})
 	}

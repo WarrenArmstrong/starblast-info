@@ -76,12 +76,14 @@ export function getChars(str: string): Array<string> {
 
 export function optionWrapSetStateAction<T>(state: T | undefined, setState: React.Dispatch<React.SetStateAction<T | undefined>>): [Option<T>, React.Dispatch<React.SetStateAction<Option<T>>>] {
 	const optionSetState = function wrappedDispatch(setStateAction: Option<T> | ((t: Option<T>) => Option<T>)) {
-		const optionT: Option<T> = typeof setStateAction === "function" ? (
-			(setStateAction as (t: Option<T>) => Option<T>)(option(state))
-		) : (
-			setStateAction
-		)
-		setState(optionT.orUndefined)
+		setState(oldT => {
+			const newOptionT: Option<T> = typeof setStateAction === "function" ? (
+				(setStateAction as (t: Option<T>) => Option<T>)(option(oldT))
+			) : (
+				setStateAction
+			)
+			return newOptionT.orUndefined
+		})
 	}
 
 	return [option(state), optionSetState]
