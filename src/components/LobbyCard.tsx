@@ -1,4 +1,5 @@
 import { useRef } from "react"
+import { some } from "ts-option"
 import useSystemInfo from "../hooks/useSystemInfo"
 import { Lobby } from "../Types"
 import { abbreviate, capitalize, getShade, getShadeFromHue, getTimeElapsedString } from "../Utilities"
@@ -12,7 +13,7 @@ interface Props {
 
 export default function LobbyCard(props: Props) {
 	const card = useRef<HTMLDivElement>(null)
-	const systemInfo = useSystemInfo(props.lobby, card)
+	const systemInfo = useSystemInfo(some(props.lobby), some(card))
 
 	return <div ref={card} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(0), borderRadius: props.cardMargin, margin: props.cardMargin}}>
 		<a href={`https://starblast.io/#${props.lobby.id}`} style={{height: "100%", width: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>

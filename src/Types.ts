@@ -61,5 +61,6 @@ export type Faction = {
 
 export type Player = {
 	name: string,
-	hue: number
+	hue: number,
+	score: number
 }

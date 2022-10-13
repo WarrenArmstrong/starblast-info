@@ -10,8 +10,11 @@ import ColumnHeader from "./ColumnHeader"
 import usePersistentState from "../hooks/usePersistentState"
 import LobbyCard from "./LobbyCard"
 
-export default function LobbyBrowser() {
-	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.lobbies")
+interface Props {
+	lobbies: Option<Array<Lobby>>
+}
+
+export default function LobbyBrowser(props: Props) {
 	const [selectedLocations, toggleLocation] = useFilters(allLocations, "lobbyBrowser.selectedLocations")
 	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")
@@ -36,8 +39,8 @@ export default function LobbyBrowser() {
 	const cardSize = isMobile() ? 300 : 400
 	const cardMargin = cardSize/40
 
-	const filteredLobbies: Option<Array<Lobby>> = lobbies.isDefined ? (
-		some(lobbies.get
+	const filteredLobbies: Option<Array<Lobby>> = props.lobbies.isDefined ? (
+		some(props.lobbies.get
 			.filter(lobby => selectedLocations.has(lobby.location))
 			.filter(lobby => selectedModes.has(lobby.mode))
 			.sort(getLobbySortFunction(sortColumn, sortAscending)))
@@ -45,7 +48,7 @@ export default function LobbyBrowser() {
 		none
 	)
 
-	return <div style={{color: Constants.textColor}}>
+	return <div>
 		<h1 className="center" >System Browser</h1>
 		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
 		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
