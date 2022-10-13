@@ -23,8 +23,12 @@ export default function LobbyCard(props: Props) {
 			{
 				systemInfo.isDefined ? (
 					systemInfo.get.factions.map(faction => {
-						return <div key={faction.hue} style={{width: props.cardSize/4, height: "100%", backgroundColor: getShadeFromHue(faction.hue), borderRadius: props.cardMargin/2, opacity: 0.7, overflow: "clip"}}>
-							<div style={{color: "white", fontSize: props.cardSize/30, fontWeight: "bold", whiteSpace: "nowrap"}}>{abbreviate(faction.name, 14)}</div>
+						return <div key={faction.hue} style={{width: props.cardSize/4, height: "100%", backgroundColor: getShadeFromHue(faction.hue, 0), borderRadius: props.cardMargin/2, opacity: 0.7, overflow: "clip"}}>
+							<div style={{color: "white", fontSize: props.cardSize/30, fontWeight: "bold", whiteSpace: "nowrap", backgroundColor: getShadeFromHue(faction.hue, 2), paddingTop: props.cardSize/200, marginBottom: props.cardSize/100}}>
+								<div>{abbreviate(faction.name, 14)}</div>
+								<div style={{paddingBottom: props.cardSize/200}}>Level {faction.baseLevel}</div>
+								<div style={{height: props.cardSize/200, width: `${100 * faction.baseProgress / (400*(Math.pow(2,faction.baseLevel)))}%`, backgroundColor: "white"}}></div>
+							</div>
 							{
 								systemInfo.get.players.filter(player => player.hue === faction.hue).map((player, index) => {
 									return <div key={index} style={{color: "white", fontSize: props.cardSize/40, whiteSpace: "nowrap"}}>{player.name}</div>

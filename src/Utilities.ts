@@ -95,8 +95,8 @@ export function isOnScreen(element: HTMLElement) {
 	return !(rect.bottom < 0 || rect.top - viewHeight >= 0)
 }
 
-export function getShadeFromHue(hue: number) {
-	return "#"+convert.hsl.hex([hue, Constants.teamColorSaturation, Constants.teamColorLightness])
+export function getShadeFromHue(hue: number, darkness: number) {
+	return "#"+convert.hsl.hex([hue, Constants.teamColorSaturation, Constants.teamColorLightness - darkness*5])
 }
 
 export function abbreviate(text: string, maxLength: number): string {

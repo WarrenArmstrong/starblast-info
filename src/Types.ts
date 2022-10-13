@@ -54,7 +54,9 @@ export type SystemInfo = {
 
 export type Faction = {
 	name: string,
-	hue: number
+	hue: number,
+	baseLevel: number,
+	baseProgress: number
 }
 
 export type Player = {
