@@ -5,7 +5,7 @@ import { Lobby, SystemInfo } from "../Types"
 import { isOnScreen } from "../Utilities"
 
 
-export default function useSystemInfo(lobby: Lobby, card: Option<React.RefObject<HTMLDivElement>>): Option<SystemInfo> {
+export default function useSystemInfo(lobby: Lobby, card: Option<React.RefObject<HTMLElement>>): Option<SystemInfo> {
 	const [systemInfo, setSystemInfo] = useState<Option<SystemInfo>>(none)
 	const lastRequestTime = useRef<number>(0)
 	const requestInFlight = useRef<boolean>(false)

@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function LobbyCard(props: Props) {
-	const card = useRef<HTMLDivElement>(null)
+	const card = useRef<HTMLAnchorElement>(null)
 	const joinButton = useRef<HTMLAnchorElement>(null)
 	const systemInfo = useSystemInfo(props.lobby, some(card))
 	const cardMargin = props.cardSize/40
@@ -28,7 +28,7 @@ export default function LobbyCard(props: Props) {
 		}
 	}
 
-	return <div ref={card} className="clickable" onClick={onClick} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
+	return <a ref={card} href={`/${props.lobby.id}`} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
 		<div style={{fontWeight: "bold", fontSize: props.cardSize/15}}>{props.lobby.id}<sup style={{fontSize: props.cardSize/50}}>{props.lobby.fromCache ? "*" : ""}</sup></div>
 		<div>{props.lobby.location}, {capitalize(props.lobby.mode)} mode</div>
 		<div>{getTimeElapsedString(props.lobby.timeElapsed)}</div>
@@ -66,5 +66,5 @@ export default function LobbyCard(props: Props) {
 			}
 		</div>
 		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/80, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}><b>JOIN</b></a>
-	</div>
+	</a>
 }
