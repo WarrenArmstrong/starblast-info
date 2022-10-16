@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react"
 import { option } from "ts-option"
 
 interface Props {
-	color: string,
 	lineWidth: number
 }
 
@@ -26,7 +25,7 @@ function LoadingSpinner(props: Props) {
 			const canvasContext = option(option(canvasRef.current).get.getContext("2d")).get
 			canvasContext.clearRect(0, 0, canvasWidth, canvasHeight)
 			canvasContext.lineWidth = props.lineWidth
-			canvasContext.strokeStyle = props.color
+			canvasContext.strokeStyle = getComputedStyle(option(canvasRef.current).get).color
 	
 			const startAngle = 2 * Math.PI * ((t*1.5) % 1)
 			const endAngle = 2 * Math.PI * ((t*1.5 + 0.5) % 1)
