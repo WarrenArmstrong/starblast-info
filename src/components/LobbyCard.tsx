@@ -65,6 +65,6 @@ export default function LobbyCard(props: Props) {
 				)
 			}
 		</div>
-		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/40, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}>JOIN</a>
+		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/80, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}><b>JOIN</b></a>
 	</div>
 }
