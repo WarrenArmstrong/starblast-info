@@ -9,7 +9,7 @@ import ToggleFilters from "./ToggleFilters"
 import ColumnHeader from "./ColumnHeader"
 import usePersistentState from "../hooks/usePersistentState"
 import LobbyCard from "./LobbyCard"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function LobbyBrowser() {
 	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.lobbies")
@@ -19,7 +19,16 @@ export default function LobbyBrowser() {
 	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "lobbyBrowser.sortAscending")
 	const [useCardView, setUseCardView] = usePersistentState<boolean>(false, "lobbyBrowser.useCardView")
 	const [cardSize, setCardSize] = useState<number>(isMobile() ? 300 : 400)
+	const [joinNextSystemAt, setJoinNextSystemAt] = useState<Option<number>>(none)
 	const cardMargin = cardSize/40
+
+	function onClickJoinNextNewSystem() {
+		if (joinNextSystemAt.isDefined) {
+			setJoinNextSystemAt(none)
+		} else {
+			setJoinNextSystemAt(some(Date.now()))
+		}
+	}
 
 	function updateSort(column: LobbyColumn) {
 		return (ascending: boolean) => {
@@ -45,11 +54,33 @@ export default function LobbyBrowser() {
 		none
 	)
 
+	useEffect(() => {
+		if (joinNextSystemAt.isDefined && filteredLobbies.isDefined && filteredLobbies.get.length > 0) {
+			const newestLobby = filteredLobbies.get.sort((a,b)=> a.timeElapsed-b.timeElapsed)[0]
+			if (newestLobby.fetchedAt - newestLobby.timeElapsed*1000 > joinNextSystemAt.get) {
+				window.open(`https://starblast.io/#${newestLobby.id}`, "_blank")
+				setJoinNextSystemAt(none)
+			}
+		}
+	}, [lobbies])
+
 	return <div style={{color: Constants.textColor}}>
 		<h1 className="center">System Browser</h1>
 		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
 		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
-		<div style={{display: "flex", justifyContent: "flex-end", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
+		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
+			<div className="clickable" style={{display: "flex", flexDirection: "column", justifyContent: "center", backgroundColor: getShade(1), borderRadius: 5, margin: 5, paddingLeft: 5, paddingRight: 5}} onClick={onClickJoinNextNewSystem}>
+				{
+					joinNextSystemAt.isDefined ? (
+						<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", gap: 10}}>
+							<b>JOINING NEXT NEW SYSTEM</b>
+							<div style={{height: 24, width: 24}}><LoadingSpinner/></div></div>
+					) : (
+						<b>JOIN NEXT NEW SYSTEM</b>
+					)
+				}
+			</div>
+			<div style={{display: "flex", justifyContent: "flex-end", alignItems: "stretch"}}>
 			{
 				useCardView ? (
 					<div style={{display: "flex", justifyContent: "flex-end"}}>
@@ -67,6 +98,7 @@ export default function LobbyBrowser() {
 			<span className="clickable material-symbols-outlined" onClick={() => setUseCardView(!useCardView)} style={{padding: 10}}>
 				{useCardView ? "view_module" : "view_list"}
 			</span>
+			</div>
 		</div>
 		{
 			useCardView ? (
