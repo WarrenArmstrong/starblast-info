@@ -1,4 +1,4 @@
-import { none, Option, some } from "ts-option"
+import { none, option, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
 import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, isMobile, pascalCaseToWords } from "../Utilities"
 import Constants from "../Constants"
@@ -22,8 +22,10 @@ export default function LobbyBrowser(props: Props) {
 	const [useCardView, setUseCardView] = usePersistentState<boolean>(false, "lobbyBrowser.useCardView")
 	const [cardSize, setCardSize] = useState<number>(isMobile() ? 300 : 400)
 	const [joinNextSystemAt, setJoinNextSystemAt] = useState<Option<number>>(none)
+	const [joinNextSystemError, setJoinNextSystemError] = useState<boolean>(false)
 
 	function onClickJoinNextNewSystem() {
+		setJoinNextSystemError(false)
 		if (joinNextSystemAt.isDefined) {
 			setJoinNextSystemAt(none)
 		} else {
@@ -61,7 +63,10 @@ export default function LobbyBrowser(props: Props) {
 		if (joinNextSystemAt.isDefined && filteredLobbies.isDefined && filteredLobbies.get.length > 0) {
 			const newestLobby = filteredLobbies.get.sort((a,b)=> a.timeElapsed-b.timeElapsed)[0]
 			if (newestLobby.fetchedAt - newestLobby.timeElapsed*1000 > joinNextSystemAt.get) {
-				window.open(`https://starblast.io/#${newestLobby.id}`, "_blank")
+				const result = window.open(`https://starblast.io/#${newestLobby.id}`, "_blank")
+				if (result == null) {
+					setJoinNextSystemError(true)
+				}
 				setJoinNextSystemAt(none)
 			}
 		}
@@ -74,12 +79,16 @@ export default function LobbyBrowser(props: Props) {
 		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
 			<div className="clickable" style={{display: "flex", flexDirection: "column", justifyContent: "center", backgroundColor: Constants.joinButtonColor, borderRadius: 5, margin: 5, paddingLeft: 5, paddingRight: 5}} onClick={onClickJoinNextNewSystem}>
 				{
-					joinNextSystemAt.isDefined ? (
-						<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", gap: 10}}>
-							<b>JOINING NEXT NEW SYSTEM</b>
-							<div style={{height: 24, width: 24}}><LoadingSpinner/></div></div>
+					joinNextSystemError ? (
+						<b>UNABLE TO CREATE NEW WINDOW</b>
 					) : (
-						<b>JOIN NEXT NEW SYSTEM</b>
+						joinNextSystemAt.isDefined ? (
+							<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", gap: 10}}>
+								<b>JOINING NEXT NEW SYSTEM</b>
+								<div style={{height: 24, width: 24}}><LoadingSpinner/></div></div>
+						) : (
+							<b>JOIN NEXT NEW SYSTEM</b>
+						)
 					)
 				}
 			</div>
