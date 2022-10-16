@@ -5,14 +5,13 @@ import { Lobby, SystemInfo } from "../Types"
 import { isOnScreen } from "../Utilities"
 
 
-export default function useSystemInfo(lobby: Lobby, card: React.RefObject<HTMLDivElement>): Option<SystemInfo> {
+export default function useSystemInfo(lobby: Lobby, card: Option<React.RefObject<HTMLDivElement>>): Option<SystemInfo> {
 	const [systemInfo, setSystemInfo] = useState<Option<SystemInfo>>(none)
 	const lastRequestTime = useRef<number>(0)
 	const requestInFlight = useRef<boolean>(false)
 
 	async function refreshSystemInfo() {
-		const cardOption: Option<HTMLDivElement> = option(card.current)
-		if (!requestInFlight.current && cardOption.isDefined && isOnScreen(cardOption.get)
+		if (!requestInFlight.current && (card.isEmpty || (option(card.get.current).isDefined && isOnScreen(option(card.get.current).get)))
 			&& ((systemInfo.isDefined && systemInfo.get.fromDaemon) || Date.now() - lastRequestTime.current > Constants.systemInfoNonDaemonFetchFrequencyMs)
 			&& (lobby.mode === "team")) {
 			try {

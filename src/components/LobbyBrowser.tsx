@@ -2,7 +2,6 @@ import { none, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
 import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, isMobile, pascalCaseToWords } from "../Utilities"
 import Constants from "../Constants"
-import useLobbies from "../hooks/useLobbies"
 import { allLobbyColumns, allLocations, allModes, ColumnSortState, Lobby, LobbyColumn } from "../Types"
 import useFilters from "../hooks/useFilters"
 import ToggleFilters from "./ToggleFilters"
@@ -11,8 +10,11 @@ import usePersistentState from "../hooks/usePersistentState"
 import LobbyCard from "./LobbyCard"
 import { useEffect, useState } from "react"
 
-export default function LobbyBrowser() {
-	const lobbies: Option<Array<Lobby>> = useLobbies("lobbyBrowser.lobbies")
+interface Props {
+	lobbies: Option<Array<Lobby>>
+}
+
+export default function LobbyBrowser(props: Props) {
 	const [selectedLocations, toggleLocation] = useFilters(allLocations, "lobbyBrowser.selectedLocations")
 	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")
@@ -20,7 +22,6 @@ export default function LobbyBrowser() {
 	const [useCardView, setUseCardView] = usePersistentState<boolean>(false, "lobbyBrowser.useCardView")
 	const [cardSize, setCardSize] = useState<number>(isMobile() ? 300 : 400)
 	const [joinNextSystemAt, setJoinNextSystemAt] = useState<Option<number>>(none)
-	const cardMargin = cardSize/40
 
 	function onClickJoinNextNewSystem() {
 		if (joinNextSystemAt.isDefined) {
@@ -45,11 +46,13 @@ export default function LobbyBrowser() {
 		}
 	}
 
-	const filteredLobbies: Option<Array<Lobby>> = lobbies.isDefined ? (
-		some(lobbies.get
-			.filter(lobby => selectedLocations.has(lobby.location))
-			.filter(lobby => selectedModes.has(lobby.mode))
-			.sort(getLobbySortFunction(sortColumn, sortAscending)))
+	const filteredLobbies: Option<Array<Lobby>> = props.lobbies.isDefined ? (
+		some(
+			props.lobbies.get
+				.filter(lobby => selectedLocations.has(lobby.location))
+				.filter(lobby => selectedModes.has(lobby.mode))
+				.sort(getLobbySortFunction(sortColumn, sortAscending))
+		)
 	) : (
 		none
 	)
@@ -62,14 +65,14 @@ export default function LobbyBrowser() {
 				setJoinNextSystemAt(none)
 			}
 		}
-	}, [lobbies])
+	}, [props.lobbies])
 
-	return <div style={{color: Constants.textColor}}>
-		<h1 className="center">System Browser</h1>
+	return <div>
+		<h1 className="center" >System Browser</h1>
 		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
 		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
 		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
-			<div className="clickable" style={{display: "flex", flexDirection: "column", justifyContent: "center", backgroundColor: getShade(1), borderRadius: 5, margin: 5, paddingLeft: 5, paddingRight: 5}} onClick={onClickJoinNextNewSystem}>
+			<div className="clickable" style={{display: "flex", flexDirection: "column", justifyContent: "center", backgroundColor: Constants.joinButtonColor, borderRadius: 5, margin: 5, paddingLeft: 5, paddingRight: 5}} onClick={onClickJoinNextNewSystem}>
 				{
 					joinNextSystemAt.isDefined ? (
 						<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", gap: 10}}>
@@ -82,7 +85,7 @@ export default function LobbyBrowser() {
 			</div>
 			<div style={{display: "flex", justifyContent: "flex-end", alignItems: "stretch"}}>
 			{
-				useCardView ? (
+				useCardView && !isMobile() ? (
 					<div style={{display: "flex", justifyContent: "flex-end"}}>
 						<span className="material-symbols-outlined" style={{padding: 10}}>remove</span>
 						<span style={{width: 200, display: "flex", flexDirection: "column", justifyContent: "center"}}>
@@ -103,10 +106,12 @@ export default function LobbyBrowser() {
 		{
 			useCardView ? (
 				<div style={{display: "grid", justifyContent: "center", padding: "initial", 
-					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+cardMargin*2}px, max-content))`, marginTop: cardMargin}}>
+					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+(cardSize/20)}px, max-content))`, marginTop: cardSize/40}}>
 					{
 						filteredLobbies.isDefined ? (
-							filteredLobbies.get.map(lobby => <LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} cardMargin={cardMargin}/>)
+							filteredLobbies.get.map(lobby => <div style={{margin: cardSize/40}}>
+								<LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} backgroundDarkness={0}/>
+							</div>)
 						) : (
 							<div/>
 						)
