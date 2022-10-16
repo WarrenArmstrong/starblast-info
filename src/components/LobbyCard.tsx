@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import React, { useRef } from "react"
 import { some } from "ts-option"
 import Constants from "../Constants"
 import useSystemInfo from "../hooks/useSystemInfo"
@@ -15,13 +15,20 @@ interface Props {
 
 export default function LobbyCard(props: Props) {
 	const card = useRef<HTMLDivElement>(null)
+	const joinButton = useRef<HTMLAnchorElement>(null)
 	const systemInfo = useSystemInfo(props.lobby, some(card))
 	const cardMargin = props.cardSize/40
 	const bigCard = props.cardSize > 800
 	const bigCardFactor = bigCard ? 700 : props.cardSize
 	const navigate = useNavigate()
 
-	return <div ref={card} className="clickable" onClick={() => navigate(`/${props.lobby.id}`)} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
+	function onClick(event: React.MouseEvent) {
+		if (event.target !== joinButton.current) {
+			navigate(`/${props.lobby.id}`)
+		}
+	}
+
+	return <div ref={card} className="clickable" onClick={onClick} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
 		<div style={{fontWeight: "bold", fontSize: props.cardSize/15}}>{props.lobby.id}<sup style={{fontSize: props.cardSize/50}}>{props.lobby.fromCache ? "*" : ""}</sup></div>
 		<div>{props.lobby.location}, {capitalize(props.lobby.mode)} mode</div>
 		<div>{getTimeElapsedString(props.lobby.timeElapsed)}</div>
@@ -58,6 +65,6 @@ export default function LobbyCard(props: Props) {
 				)
 			}
 		</div>
-		<a href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/40, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}>JOIN</a>
+		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/40, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}>JOIN</a>
 	</div>
 }
