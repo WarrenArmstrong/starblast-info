@@ -73,7 +73,7 @@ export default function LobbyBrowser(props: Props) {
 	}, [props.lobbies])
 
 	return <div>
-		<h1 className="center" >System Browser</h1>
+		<h1 className="center">Unofficial System Browser</h1>
 		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
 		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
 		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
@@ -108,7 +108,7 @@ export default function LobbyBrowser(props: Props) {
 				)
 			}
 			<span className="clickable material-symbols-outlined" onClick={() => setUseCardView(!useCardView)} style={{padding: 10}}>
-				{useCardView ? "view_module" : "view_list"}
+				{useCardView ? "view_list" : "view_module"}
 			</span>
 			</div>
 		</div>
