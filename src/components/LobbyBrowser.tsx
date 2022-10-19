@@ -118,8 +118,8 @@ export default function LobbyBrowser(props: Props) {
 					gridTemplateColumns: `repeat(auto-fit, minmax(${cardSize+(cardSize/20)}px, max-content))`, marginTop: cardSize/40}}>
 					{
 						filteredLobbies.isDefined ? (
-							filteredLobbies.get.map(lobby => <div style={{margin: cardSize/40}}>
-								<LobbyCard key={lobby.id} lobby={lobby} cardSize={cardSize} backgroundDarkness={0}/>
+							filteredLobbies.get.map(lobby => <div key={lobby.id} style={{margin: cardSize/40}}>
+								<LobbyCard lobby={lobby} cardSize={cardSize} backgroundDarkness={0}/>
 							</div>)
 						) : (
 							<div/>

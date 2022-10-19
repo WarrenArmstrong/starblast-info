@@ -5,7 +5,6 @@ import useSystemInfo from "../hooks/useSystemInfo"
 import { Lobby } from "../Types"
 import { abbreviate, capitalize, getShade, getShadeFromHue, getTimeElapsedString } from "../Utilities"
 import LoadingSpinner from "./LoadingSpinner"
-import { useNavigate } from "react-router-dom"
 
 interface Props {
 	lobby: Lobby,
@@ -14,21 +13,15 @@ interface Props {
 }
 
 export default function LobbyCard(props: Props) {
-	const card = useRef<HTMLAnchorElement>(null)
+	const card = useRef<HTMLDivElement>(null)
 	const joinButton = useRef<HTMLAnchorElement>(null)
 	const systemInfo = useSystemInfo(props.lobby, some(card))
 	const cardMargin = props.cardSize/40
 	const bigCard = props.cardSize > 800
 	const bigCardFactor = bigCard ? 700 : props.cardSize
-	const navigate = useNavigate()
 
-	function onClick(event: React.MouseEvent) {
-		if (event.target !== joinButton.current) {
-			navigate(`/${props.lobby.id}`)
-		}
-	}
-
-	return <a ref={card} href={`/${props.lobby.id}`} style={{fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
+	return <div ref={card} style={{position: "relative", fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
+		<a href={`/${props.lobby.id}`} style={{zIndex: 1, position: "absolute", top: 0, left: 0, bottom: 0, right: 0}}/>
 		<div style={{fontWeight: "bold", fontSize: props.cardSize/15}}>{props.lobby.id}<sup style={{fontSize: props.cardSize/50}}>{props.lobby.fromCache ? "*" : ""}</sup></div>
 		<div>{props.lobby.location}, {capitalize(props.lobby.mode)} mode</div>
 		<div>{getTimeElapsedString(props.lobby.timeElapsed)}</div>
@@ -65,6 +58,6 @@ export default function LobbyCard(props: Props) {
 				)
 			}
 		</div>
-		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/80, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}><b>JOIN</b></a>
-	</a>
+		<a ref={joinButton} href={`https://starblast.io/#${props.lobby.id}`} style={{zIndex: 2, backgroundColor: Constants.joinButtonColor, borderRadius: props.cardSize/80, marginLeft: props.cardSize/40, marginRight: props.cardSize/40, marginBottom: props.cardSize/40}}><b>JOIN</b></a>
+	</div>
 }
