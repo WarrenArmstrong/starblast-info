@@ -9,6 +9,7 @@ export default {
 	simStatusFetchFrequencyMs: 10 * 1000,
 	systemInfoFetchFrequencyMs: 5 * 1000,
 	systemInfoNonDaemonFetchFrequencyMs: 10 * 1000,
-	systemInfoEndpoint: "https://z4ji7p36rc.execute-api.us-east-2.amazonaws.com/Prod",
-	maxWidth: 1300
+	maxWidth: 1300,
+	hashedPasscode: "ZZv2Wyfp74mLyJs8VCra5IaeaDLfH1lNfrBf16FL+lY=",
+	hashedSystemInfoEndpoint: "U2FsdGVkX1+pP2ycROFINtGsXz1wu7XNxNdnPzmg/J5Sss0VBTQfTDO6Vifr7rMjhC5rKb51QUTgIEqSKWc0aVKBRBxTA/M+41XD3rnHpPg="
 }
