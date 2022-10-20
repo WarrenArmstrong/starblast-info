@@ -16,7 +16,7 @@ export default function useSystemInfo(lobby: Lobby, card: Option<React.RefObject
 	const requestInFlight = useRef<boolean>(false)
 
 	async function refreshSystemInfo() {
-		if (!requestInFlight.current && (card.isEmpty || (option(card.get.current).isDefined && isOnScreen(option(card.get.current).get)))
+		if (!requestInFlight.current && !document.hidden && (card.isEmpty || (option(card.get.current).isDefined && isOnScreen(option(card.get.current).get)))
 			&& ((systemInfo.isDefined && systemInfo.get.fromDaemon) || Date.now() - lastRequestTime.current > Constants.systemInfoNonDaemonFetchFrequencyMs)
 			&& (lobby.mode === "team")) {
 			try {
