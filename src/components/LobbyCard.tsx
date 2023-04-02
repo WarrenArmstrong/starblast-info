@@ -22,7 +22,7 @@ export default function LobbyCard(props: Props) {
 
 	return <div ref={card} style={{position: "relative", fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", justifyContent: "flex-end", textAlign: "center"}}>
 		<a href={`/${props.lobby.id}`} style={{zIndex: 1, position: "absolute", top: 0, left: 0, bottom: 0, right: 0}}/>
-		<div style={{fontWeight: "bold", fontSize: props.cardSize/15}}>{props.lobby.id}<sup style={{fontSize: props.cardSize/50}}>{props.lobby.fromCache ? "*" : ""}</sup></div>
+		<div style={{fontWeight: "bold", fontSize: props.cardSize/15}}>{props.lobby.id}</div>
 		<div>{props.lobby.location}, {capitalize(props.lobby.mode)} mode</div>
 		<div>{getTimeElapsedString(props.lobby.timeElapsed)}</div>
 		<div style={{display: "flex", justifyContent: "space-evenly", height: props.cardSize * 0.64, backgroundColor: getShade(2), padding: cardMargin, margin: cardMargin, marginTop: cardMargin/2, borderRadius: cardMargin/2}}>

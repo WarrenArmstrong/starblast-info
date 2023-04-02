@@ -145,7 +145,7 @@ export default function LobbyBrowser(props: Props) {
 									{
 										filteredLobbies.get.map(lobby => 
 											<tr className="lobby-browser-row" key={lobby.id}>
-												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}<sup style={{fontSize: "x-small"}}>{lobby.fromCache ? "*" : ""}</sup></a></td>
+												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.id}</a></td>
 												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.location}</a></td>
 												<td><a href={`https://starblast.io/#${lobby.id}`}>{capitalize(lobby.mode)}</a></td>
 												<td><a href={`https://starblast.io/#${lobby.id}`}>{lobby.playerCount}</a></td>

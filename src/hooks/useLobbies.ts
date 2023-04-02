@@ -49,21 +49,11 @@ export default function useLobbies(localStorageKey: string) {
 					mode: system.mode,
 					timeElapsed: system.time,
 					fetchedAt: Date.now(),
-					fromCache: false,
 					socketAddress: server.address
 				}
 			})
 		})
-		setLobbies(oldLobbies => {
-			oldLobbies.getOrElseValue([]).forEach(oldLobby => {
-				if (!newLobbies.find(newLobby => newLobby.id === oldLobby.id)
-					&& Date.now() - oldLobby.fetchedAt < Constants.maxLobbyCacheTimeMs) {
-					oldLobby.fromCache = true
-					newLobbies.push(oldLobby)
-				}
-			})
-			return some(newLobbies)
-		})
+		setLobbies(some(newLobbies))
 	}
 
 	useEffect(() => {

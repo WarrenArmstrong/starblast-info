@@ -5,7 +5,6 @@ export default {
 	joinButtonColor: "#338767",
 	teamColorSaturation: 22,
 	teamColorLightness: 50,
-	maxLobbyCacheTimeMs: 5 * 60 * 1000,
 	simStatusFetchFrequencyMs: 10 * 1000,
 	systemInfoFetchFrequencyMs: 5 * 1000,
 	systemInfoNonDaemonFetchFrequencyMs: 10 * 1000,

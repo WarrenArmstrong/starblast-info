@@ -25,7 +25,6 @@ export type Lobby = {
 	mode: Mode,
 	timeElapsed: number,
 	fetchedAt: number,
-	fromCache: boolean,
 	socketAddress: string
 }
 
