@@ -1,22 +1,10 @@
-enum LocationEnum {
-	America,
-	Asia,
-	Europe
-}
-export type Location = keyof typeof LocationEnum
-export const allLocations: Array<Location> = Object.values(LocationEnum)
-	.filter((location) => isNaN(Number(location)))
-	.map(location => location as Location)
+import { ShapeToType, s } from "shape-tape"
 
-enum ModeEnum {
-	team,
-	survival,
-	invasion
-}
-export type Mode = keyof typeof ModeEnum
-export const allModes: Array<Mode> = Object.values(ModeEnum)
-	.filter((mode) => isNaN(Number(mode)))
-	.map(mode => mode as Mode)
+export const locationShape = s.union([s.literal("America"), s.literal("Asia"), s.literal("Europe")])
+export type Location = ShapeToType<typeof locationShape>
+export const modeShape = s.union([s.literal("team"), s.literal("survival"), s.literal("invasion")])
+export type Mode = ShapeToType<typeof modeShape>
+
 
 export type Lobby = {
 	id: number,

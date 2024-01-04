@@ -1,13 +1,13 @@
 import { capitalize, getShade } from "../Utilities"
 
-interface Props {
+interface Props<T> {
 	title: string,
-	allFilters: Array<string>,
-	selectedFilters: Set<string>,
-	toggleFilter: (filter: string) => void
+	allFilters: Array<T>,
+	selectedFilters: Set<T>,
+	toggleFilter: (filter: T) => void
 }
 
-export default function ToggleFilters(props: Props) {
+export default function ToggleFilters<T extends string>(props: Props<T>) {
 	return <div style={{backgroundColor: getShade(0), overflow: "auto", borderTopWidth: 2, borderTopStyle: "solid", borderColor: getShade(1)}}>
 		<span style={{float: "left", padding: 10, fontWeight: "bold", width: 100}}>{props.title}:</span>
 		{

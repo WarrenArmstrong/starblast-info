@@ -1,8 +1,8 @@
-import { none, option, Option, some } from "ts-option"
+import { none, Option, some } from "ts-option"
 import LoadingSpinner from "./LoadingSpinner"
 import { capitalize, getLobbySortFunction, getShade, getTimeElapsedString, isMobile, pascalCaseToWords } from "../Utilities"
 import Constants from "../Constants"
-import { allLobbyColumns, allLocations, allModes, ColumnSortState, Lobby, LobbyColumn } from "../Types"
+import { allLobbyColumns, ColumnSortState, Lobby, LobbyColumn, Location, locationShape, Mode, modeShape } from "../Types"
 import useFilters from "../hooks/useFilters"
 import ToggleFilters from "./ToggleFilters"
 import ColumnHeader from "./ColumnHeader"
@@ -15,11 +15,11 @@ interface Props {
 }
 
 export default function LobbyBrowser(props: Props) {
-	const [selectedLocations, toggleLocation] = useFilters(allLocations, "lobbyBrowser.selectedLocations")
-	const [selectedModes, toggleMode] = useFilters(allModes, "lobbyBrowser.selectedModes")
+	const [selectedLocations, toggleLocation] = useFilters<Location>(["America"], "lobbyBrowser.selectedLocations")
+	const [selectedModes, toggleMode] = useFilters<Mode>(["team"], "lobbyBrowser.selectedModes")
 	const [sortColumn, setSortColumn] = usePersistentState<LobbyColumn>(LobbyColumn.TimeElapsed, "lobbyBrowser.sortColumn")
 	const [sortAscending, setSortAscending] = usePersistentState<boolean>(true, "lobbyBrowser.sortAscending")
-	const [useCardView, setUseCardView] = usePersistentState<boolean>(false, "lobbyBrowser.useCardView")
+	const [useCardView, setUseCardView] = usePersistentState<boolean>(true, "lobbyBrowser.useCardView")
 	const [cardSize, setCardSize] = useState<number>(isMobile() ? 300 : 400)
 	const [joinNextSystemAt, setJoinNextSystemAt] = useState<Option<number>>(none)
 	const [joinNextSystemError, setJoinNextSystemError] = useState<boolean>(false)
@@ -74,8 +74,8 @@ export default function LobbyBrowser(props: Props) {
 
 	return <div>
 		<h1 className="center">Unofficial System Browser</h1>
-		<ToggleFilters title="Locations" allFilters={allLocations} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
-		<ToggleFilters title="Modes" allFilters={allModes} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
+		<ToggleFilters title="Locations" allFilters={locationShape.members.map(x => x.value)} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
+		<ToggleFilters title="Modes" allFilters={modeShape.members.map(x => x.value)} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
 		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
 			<div className="clickable" style={{display: "flex", flexDirection: "column", justifyContent: "center", backgroundColor: Constants.joinButtonColor, borderRadius: 5, margin: 5, paddingLeft: 5, paddingRight: 5}} onClick={onClickJoinNextNewSystem}>
 				{
