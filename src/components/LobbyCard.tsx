@@ -18,10 +18,8 @@ export default function LobbyCard(props: Props) {
 	const joinButton = useRef<HTMLAnchorElement>(null)
 	const systemInfo = useSystemInfo(props.lobby, some(card))
 	const cardMargin = props.cardSize/40
-	const bigCard = props.cardSize > 800
-	const bigCardFactor = bigCard ? 700 : props.cardSize
 
-	return <div ref={card} style={{position: "relative", fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", textAlign: "center"}}>
+	return <div ref={card} style={{position: "relative", fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.fullPage ? undefined : props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", textAlign: "center"}}>
 		{
 			props.fullPage ? (
 				undefined
@@ -37,16 +35,16 @@ export default function LobbyCard(props: Props) {
 				systemInfo.isDefined ? (
 					systemInfo.get.factions.map(faction => {
 						return <div key={faction.hue} style={{width: props.cardSize/4, height: "100%", backgroundColor: getShadeFromHue(faction.hue, 0), borderRadius: cardMargin/2, opacity: 0.7, overflow: "clip"}}>
-							<div style={{color: "white", fontSize: bigCardFactor/30, fontWeight: "bold", whiteSpace: "nowrap", backgroundColor: getShadeFromHue(faction.hue, 2), paddingTop: props.cardSize/200}}>
+							<div style={{color: "white", fontSize: Math.min(props.cardSize, 700)/30, fontWeight: "bold", whiteSpace: "nowrap", backgroundColor: getShadeFromHue(faction.hue, 2), paddingTop: props.cardSize/200}}>
 								<div>{abbreviate(faction.name, 14)}</div>
 								<div style={{paddingBottom: props.cardSize/200}}>Level {faction.baseLevel}</div>
 								<div style={{height: props.cardSize/200, width: `${100 * faction.baseProgress / (400*(Math.pow(2,faction.baseLevel)))}%`, backgroundColor: "white"}}></div>
 							</div>
 							{
 								systemInfo.get.players.filter(player => player.hue === faction.hue).map((player, index) => {
-									return <div key={index} style={{color: "white", fontSize: bigCardFactor/40, whiteSpace: "nowrap", overflow: "clip", height: bigCardFactor/27, backgroundColor: getShadeFromHue(player.hue, index % 2 == 0 ? 0 : 0.75)}}>
+									return <div key={index} style={{color: "white", fontSize: Math.min(props.cardSize, 700)/40, whiteSpace: "nowrap", overflow: "clip", height: Math.min(props.cardSize, 700)/27, backgroundColor: getShadeFromHue(player.hue, index % 2 == 0 ? 0 : 0.75)}}>
 										{
-											bigCard ? (
+											props.fullPage ? (
 												<div style={{display: "flex", justifyContent: "space-between", height: "100%"}}>
 													<div style={{paddingLeft: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{player.name}</div>
 													<div style={{paddingRight: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{player.score}</div>
