@@ -73,7 +73,7 @@ export default function LobbyBrowser(props: Props) {
 	}, [props.lobbies])
 
 	return <div>
-		<h1 className="center">Unofficial System Browser</h1>
+		<h1 className="center"><i>starblast.info</i></h1>
 		<ToggleFilters title="Locations" allFilters={locationShape.members.map(x => x.value)} selectedFilters={selectedLocations} toggleFilter={toggleLocation}/>
 		<ToggleFilters title="Modes" allFilters={modeShape.members.map(x => x.value)} selectedFilters={selectedModes} toggleFilter={toggleMode}/>
 		<div style={{display: "flex", justifyContent: "space-between", alignItems: "stretch", borderTopWidth: 2, borderTopStyle: "solid", backgroundColor: getShade(0), borderColor: getShade(1)}}>
@@ -119,7 +119,7 @@ export default function LobbyBrowser(props: Props) {
 					{
 						filteredLobbies.isDefined ? (
 							filteredLobbies.get.map(lobby => <div key={lobby.id} style={{margin: cardSize/40}}>
-								<LobbyCard lobby={lobby} cardSize={cardSize} backgroundDarkness={0}/>
+								<LobbyCard lobby={lobby} cardSize={cardSize} backgroundDarkness={0} fullPage={false}/>
 							</div>)
 						) : (
 							<div/>

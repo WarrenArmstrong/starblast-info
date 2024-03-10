@@ -6,7 +6,7 @@ import PasscodeFilter from './PasscodeFilter';
 function App() {
 	return (
 		<div className="App" style={{backgroundColor: getShade(1), color: Constants.textColor}}>
-			<div style={{margin: "0 auto", maxWidth: isMobile() ? undefined : Constants.maxWidth, userSelect: "none", overflow: "hidden"}}>
+			<div style={{margin: "0 auto", maxWidth: isMobile() ? undefined : Constants.maxWidth, overflow: "hidden"}}>
 				<PasscodeFilter>
 					<LobbyRoutes/>
 				</PasscodeFilter>
