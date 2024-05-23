@@ -58,7 +58,7 @@ export default function LobbyCard(props: Props) {
 													<div style={{paddingRight: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{player.score}</div>
 												</div>
 											) : (
-												<div style={{height: "100%"}}>{player.name}</div>
+												<div style={{height: "100%"}}>{getDisplayName(player.name)}</div>
 											)
 										}
 									</div>
