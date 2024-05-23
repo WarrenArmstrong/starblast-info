@@ -21,7 +21,7 @@ export default function LobbyCard(props: Props) {
 
 	function getDisplayName(name: string) {
 		if (name.startsWith("[TT6]")) {
-			return <span><span style={{animation: "flashing-teal 0.3s alternate infinite"}}>[TT6]</span>{name.replace("[TT6]", "")}</span>
+			return <span><span style={{animation: "flashing-teal 0.5s alternate infinite"}}>[TT6]</span>{name.replace("[TT6]", "")}</span>
 		} else {
 			return <span>{name}</span>
 		}
