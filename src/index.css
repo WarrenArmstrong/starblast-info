@@ -66,3 +66,12 @@ td > a {
 	display: block;
 	padding: 8px;
 }
+
+@keyframes flashing-teal {
+	from {
+		color: #00FFFF;
+	}
+	to {
+		color: #55FFFF;
+	}
+}

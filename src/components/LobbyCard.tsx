@@ -19,6 +19,14 @@ export default function LobbyCard(props: Props) {
 	const systemInfo = useSystemInfo(props.lobby, some(card))
 	const cardMargin = props.cardSize/40
 
+	function getDisplayName(name: string) {
+		if (name.startsWith("[TT6]")) {
+			return <span><span style={{animation: "flashing-teal 0.3s alternate infinite"}}>[TT6]</span>{name.replace("[TT6]", "")}</span>
+		} else {
+			return <span>{name}</span>
+		}
+	}
+
 	return <div ref={card} style={{position: "relative", fontSize: props.cardSize/25, listStyleType: "none", width: props.cardSize, height: props.fullPage ? undefined : props.cardSize, backgroundColor: getShade(props.backgroundDarkness), borderRadius: cardMargin, display: "flex", flexDirection: "column", textAlign: "center"}}>
 		{
 			props.fullPage ? (
@@ -46,7 +54,7 @@ export default function LobbyCard(props: Props) {
 										{
 											props.fullPage ? (
 												<div style={{display: "flex", justifyContent: "space-between", height: "100%"}}>
-													<div style={{paddingLeft: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{player.name}</div>
+													<div style={{paddingLeft: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{getDisplayName(player.name)}</div>
 													<div style={{paddingRight: props.cardSize/300, height: "100%", display: "flex", flexDirection: "column", justifyContent: "center"}}>{player.score}</div>
 												</div>
 											) : (
